@@ -325,7 +325,7 @@ function! s:subr_eq(args) abort
   if x['tag'] ==# 'num' && y['tag'] ==# 'num'
     return x['data'] ==# y['data'] ? s:sym_t : s:k_nil
   endif
-  return x ==# y ? s:sym_t : s:k_nil
+  return x is# y ? s:sym_t : s:k_nil
 endfunction
 
 function! s:subr_atom(args) abort
