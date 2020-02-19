@@ -340,36 +340,30 @@ function! s:subr_symbolp(args) abort
   return s:safe_car(a:args)['tag'] ==# 'sym' ? s:sym_t : s:k_nil
 endfunction
 
-function! s:subr_add_or_mul(f, init_val) abort
-  function! s:aux_a(f, init_val, args) abort
-    let ret = a:init_val
-    let args = a:args
-    while args['tag'] ==# 'cons'
-      if args['car']['tag'] !=# 'num' | return s:make_error('wrong type') | endif
-      let ret = a:f(ret, args['car']['data'])
-      let args = args['cdr']
-    endwhile
-    return s:make_num(ret)
-  endfunction
-  return {args -> s:aux_a(a:f, a:init_val, args)}
+function! s:subr_add_or_mul(f, init_val, args) abort
+  let ret = a:init_val
+  let args = a:args
+  while args['tag'] ==# 'cons'
+    if args['car']['tag'] !=# 'num' | return s:make_error('wrong type') | endif
+    let ret = a:f(ret, args['car']['data'])
+    let args = args['cdr']
+  endwhile
+  return s:make_num(ret)
 endfunction
 
-let s:subr_add = s:subr_add_or_mul({x, y -> x + y}, 0)
-let s:subr_mul = s:subr_add_or_mul({x, y -> x * y}, 1)
+let s:subr_add = {args -> s:subr_add_or_mul({x, y -> x + y}, 0, args)}
+let s:subr_mul = {args -> s:subr_add_or_mul({x, y -> x * y}, 1, args)}
 
-function! s:subr_sub_or_div_or_mod(f) abort
-  function! s:aux_b(f, args) abort
-    let x = s:safe_car(a:args)
-    let y = s:safe_car(s:safe_cdr(a:args))
-    if x['tag'] !=# 'num' || y['tag'] !=# 'num' | return s:make_error('wrong type') | endif
-    return s:make_num(a:f(x['data'], y['data']))
-  endfunction
-  return {args -> s:aux_b(a:f, args)}
+function! s:subr_sub_or_div_or_mod(f, args) abort
+  let x = s:safe_car(a:args)
+  let y = s:safe_car(s:safe_cdr(a:args))
+  if x['tag'] !=# 'num' || y['tag'] !=# 'num' | return s:make_error('wrong type') | endif
+  return s:make_num(a:f(x['data'], y['data']))
 endfunction
 
-let s:subr_sub = s:subr_sub_or_div_or_mod({x, y -> x - y})
-let s:subr_div = s:subr_sub_or_div_or_mod({x, y -> x / y})
-let s:subr_mod = s:subr_sub_or_div_or_mod({x, y -> x % y})
+let s:subr_sub = {args -> s:subr_sub_or_div_or_mod({x, y -> x - y}, args)}
+let s:subr_div = {args -> s:subr_sub_or_div_or_mod({x, y -> x / y}, args)}
+let s:subr_mod = {args -> s:subr_sub_or_div_or_mod({x, y -> x % y}, args)}
 
 function! s:repl() abort
   while 1
