@@ -19,7 +19,7 @@ function! s:make_error(str) abort
   return {'tag': 'error', 'data': a:str}
 endfunction
 
-let s:sym_table = [["nil", s:k_nil]]
+let s:sym_table = [['nil', s:k_nil]]
 
 function! s:make_sym(str) abort
   for tpl in s:sym_table
@@ -32,14 +32,14 @@ function! s:make_sym(str) abort
   return ret
 endfunction
 
-let s:sym_t = s:make_sym("t")
-let s:sym_quote = s:make_sym("quote")
-let s:sym_if = s:make_sym("if")
-let s:sym_lambda = s:make_sym("lambda")
-let s:sym_defun = s:make_sym("defun")
-let s:sym_setq = s:make_sym("setq")
-let s:sym_loop = s:make_sym("loop")
-let s:sym_return = s:make_sym("return")
+let s:sym_t = s:make_sym('t')
+let s:sym_quote = s:make_sym('quote')
+let s:sym_if = s:make_sym('if')
+let s:sym_lambda = s:make_sym('lambda')
+let s:sym_defun = s:make_sym('defun')
+let s:sym_setq = s:make_sym('setq')
+let s:sym_loop = s:make_sym('loop')
+let s:sym_return = s:make_sym('return')
 let s:loop_val = s:k_nil
 
 function! s:make_num(n) abort
